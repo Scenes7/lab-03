@@ -1,5 +1,6 @@
 package com.example.listycity3
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,12 +30,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 @Composable
 fun CityListScreen(
     cities: List<City>,
-    onAddCity: (City) -> Unit,
+    onAddCity: (City, String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var newCityName by remember { mutableStateOf("") }
     var newProvinceName by remember { mutableStateOf("") }
     var showAddCityFields by remember { mutableStateOf(false) }
+    var selectedCity by remember { mutableStateOf("") }
+    var selectedProvince by remember { mutableStateOf("") }
 
     Column(modifier = modifier.fillMaxSize()) {
         Row(
@@ -77,7 +80,9 @@ fun CityListScreen(
                                 City(
                                     name = newCityName,
                                     province = newProvinceName
-                                )
+                                ),
+                                selectedCity,
+                                selectedProvince
                             )
                             newCityName = ""
                             newProvinceName = ""
@@ -85,14 +90,29 @@ fun CityListScreen(
                         }
                     }
                 ) {
-                    Text("Add City")
+                    if (selectedCity == "" && selectedProvince == "") {
+                        Text("Add City")
+                    } else {
+                        Text("Edit City")
+                    }
                 }
 
             }
         }
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             itemsIndexed(cities) { index, city ->
-                CityRow(city = city)
+                CityRow(
+                    city = city,
+                    onSelect = {
+                        if (selectedCity == city.name && selectedProvince == city.province) {
+                            selectedCity = ""
+                            selectedProvince = ""
+                        } else {
+                            selectedCity = city.name
+                            selectedProvince = city.province
+                        }
+                    }
+                )
                 if (index < cities.lastIndex) {
                     HorizontalDivider()
                 }
@@ -102,11 +122,12 @@ fun CityListScreen(
 }
 
 @Composable
-fun CityRow(city: City) {
+fun CityRow(city: City, onSelect: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 16.dp)
+            .clickable { onSelect() }
     ) {
         Text(
             text = city.name,
@@ -132,7 +153,7 @@ fun CityListScreenPreview() {
                 City("Vancouver", "BC"),
                 City("Calgary", "AB")
             ),
-                    onAddCity = {}
+                    onAddCity = {city: City, selectedCity: String, selectedProvince: String ->}
         )
     }
 }

@@ -9,7 +9,15 @@ class CityRepository {
         City("Toronto", "ON")
     )
 
-    fun addCity(city: City) {
+    fun addCity(city: City, selectedCity: String, selectedProvince: String) {
+        if (selectedCity != "") {
+            for (i in 1..(_cities.size)) {
+                if (_cities[i].name == selectedCity && _cities[i].province == selectedProvince) {
+                    _cities[i] = city
+                    return
+                }
+            }
+        }
         _cities.add(city)
     }
 
