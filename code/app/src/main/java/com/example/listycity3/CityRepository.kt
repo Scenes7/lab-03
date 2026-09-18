@@ -11,12 +11,13 @@ class CityRepository {
 
     fun addCity(city: City, selectedCity: String, selectedProvince: String) {
         if (selectedCity != "") {
-            for (i in 1..(_cities.size)) {
+            for (i in 0..(_cities.size-1)) {
                 if (_cities[i].name == selectedCity && _cities[i].province == selectedProvince) {
                     _cities[i] = city
                     return
                 }
             }
+            return
         }
         _cities.add(city)
     }
